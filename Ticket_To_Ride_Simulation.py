@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import random
 
 def Creating_The_Board():
     # Define the list of cities
@@ -16,21 +17,21 @@ def Creating_The_Board():
     }
 
     # Create the DataFrame
-    board= pd.DataFrame(fill_in_color)
+    board = pd.DataFrame(fill_in_color)
 
     # Optionally, fill in some example counts and colors
     board.loc['Helena', 'Winnipeg'] = [('blue', 4)]
     board.loc['Winnipeg', 'Helena'] = [('blue', 4)]
-    board.loc['Helena', 'Calgary'] = [('any',4)]
-    board.loc['Calgary','Helena'] = [('any',4)]
-    board.loc['Seattle','Helena'] = [('yellow',6)]
-    board.loc['Helena', 'Seattle'] = [('yellow',6)]
-    board.loc['Helena','Duluth'] = [('orange', 6)]
-    board.loc['Duluth','Helena'] = [('orange', 6)]
-    board.loc['Helena','Omaha'] = [('red',5)]
-    board.loc['Omaha','Helena'] = [('red',5)]
-    board.loc['Helena', 'Salt Lake City']= [('pink',3)]
-    board.loc['Salt Lake City', 'Helena'] = [('pink',3)]
+    board.loc['Helena', 'Calgary'] = [('any', 4)]
+    board.loc['Calgary', 'Helena'] = [('any', 4)]
+    board.loc['Seattle', 'Helena'] = [('yellow', 6)]
+    board.loc['Helena', 'Seattle'] = [('yellow', 6)]
+    board.loc['Helena', 'Duluth'] = [('orange', 6)]
+    board.loc['Duluth', 'Helena'] = [('orange', 6)]
+    board.loc['Helena', 'Omaha'] = [('red', 5)]
+    board.loc['Omaha', 'Helena'] = [('red', 5)]
+    board.loc['Helena', 'Salt Lake City'] = [('pink', 3)]
+    board.loc['Salt Lake City', 'Helena'] = [('pink', 3)]
     board.loc['Vancouver', 'Calgary'] = [('any', 3)]
     board.loc['Calgary', 'Vancouver'] = [('any',3)]
     board.loc['Vancouver', 'Seattle'] = [('any',1)]
@@ -160,26 +161,89 @@ def Creating_The_Board():
     board.loc['Charleston','Alanta'] = [('any',2)]
     board.loc['Alanta','Miami'] = [('blue',5)]
     board.loc['Miami','Alanta'] = [('blue',5)]
-    board.loc['New Orleans', 'Alanta'] = [('yellow',4),('orange',4)]
-    board.loc['Alanta','New Orleans'] = [('yellow',4),('orange',4)]
-    board.loc['Little Rock','Dallas'] = [('any',2)]
-    board.loc['Dallas','Little Rock'] = [('any',2)]
-    board.loc['New Orleans','Miami'] = [('red',6)]
-    board.loc['Miami','New Orleans'] = [('red',6)]
-    board.loc['New Orleans', 'Houston'] = [('any',2)]
-    board.loc['Houston','New Orleans'] = [('any',2)]
-    board.loc['Houston','Dallas'] = [('any',1)]
-    board.loc['Dallas','Houston'] = [('any',1)]
-    board.loc['Dallas','El Palo'] = [('red',4)]
-    board.loc['El Palo','Dallas'] = [('red',4)]
-    board.loc['El Palo','Houston'] = [('green',6)]
-    board.loc['Houston','El Palo'] = [('green',6)]
-
-
-
-
-
-
+    board.loc['New Orleans', 'Alanta'] = [('yellow', 4), ('orange', 4)]
+    board.loc['Alanta', 'New Orleans'] = [('yellow', 4), ('orange', 4)]
+    board.loc['Little Rock', 'Dallas'] = [('any', 2)]
+    board.loc['Dallas', 'Little Rock'] = [('any', 2)]
+    board.loc['New Orleans', 'Miami'] = [('red', 6)]
+    board.loc['Miami', 'New Orleans'] = [('red', 6)]
+    board.loc['New Orleans', 'Houston'] = [('any', 2)]
+    board.loc['Houston', 'New Orleans'] = [('any', 2)]
+    board.loc['Houston', 'Dallas'] = [('any', 1)]
+    board.loc['Dallas', 'Houston'] = [('any', 1)]
+    board.loc['Dallas', 'El Palo'] = [('red', 4)]
+    board.loc['El Palo', 'Dallas'] = [('red', 4)]
+    board.loc['El Palo', 'Houston'] = [('green', 6)]
+    board.loc['Houston', 'El Palo'] = [('green', 6)]
 
     print(board)
-Creating_The_Board()
+    return board
+
+def Get_City_Pairs(num_of_cards):
+    # Define a list to hold each route card with city pairs and points
+    routes = [
+        {"city1": "Winnipeg", "city2": "Little Rock", "points": 11},
+        {"city1": "Duluth", "city2": "Houston", "points": 8},
+        {"city1": "Vancouver", "city2": "Santa Fe", "points": 13},
+        {"city1": "Denver", "city2": "Pittsburgh", "points": 11},
+        {"city1": "Sault St. Marie", "city2": "Nashville", "points": 8},
+        {"city1": "Dallas", "city2": "New York", "points": 11},
+
+        {"city1": "Los Angeles", "city2": "New York", "points": 21},
+        {"city1": "Denver", "city2": "El Paso", "points": 4},
+        {"city1": "Duluth", "city2": "El Paso", "points": 10},
+        {"city1": "Portland", "city2": "Phoenix", "points": 11},
+        {"city1": "Sault St. Marie", "city2": "Oklahoma City", "points": 9},
+        {"city1": "Helena", "city2": "Los Angeles", "points": 8},
+
+        {"city1": "Chicago", "city2": "New Orleans", "points": 7},
+        {"city1": "Toronto", "city2": "Miami", "points": 10},
+        {"city1": "Houston", "city2": "Winnipeg", "points": 12},
+        {"city1": "Boston", "city2": "Miami", "points": 12},
+        {"city1": "Los Angeles", "city2": "Chicago", "points": 16},
+        {"city1": "Chicago", "city2": "Sante Fe", "points": 9},
+
+        {"city1": "New York", "city2": "Atlanta", "points": 6},
+        {"city1": "Montreal", "city2": "New Orleans", "points": 13},
+        {"city1": "Montreal", "city2": "Atlanta", "points": 9},
+        {"city1": "Seattle", "city2": "Los Angeles", "points": 9},
+        {"city1": "Kansas City", "city2": "Houston", "points": 5},
+        {"city1": "Calgary", "city2": "Salt Lake City", "points": 7},
+
+        {"city1": "Los Angeles", "city2": "Miami", "points": 20},
+        {"city1": "Seattle", "city2": "New York", "points": 22},
+        {"city1": "Portland", "city2": "Nashville", "points": 17},
+        {"city1": "San Francisco", "city2": "Atlanta", "points": 17},
+        {"city1": "Vancouver", "city2": "Montreal", "points": 20},
+        {"city1": "Calgary", "city2": "Phoenix", "points": 13},
+
+
+
+        # Add more routes as needed
+    ]
+
+    # Randomly select the specified number of unique routes
+    city_pairs = random.sample(routes, num_of_cards)
+
+    # Display the selected routes
+    for route in city_pairs:
+        print(f"{route['city1']} to {route['city2']} - Points: {route['points']}")
+
+    return city_pairs
+
+def Shortest_Path(board, routes):
+    distance = []
+    distance[routes["child1"]] = 0
+    visted = []  # visted nodes
+
+    #
+
+
+def main():
+    board = Creating_The_Board()
+    routes = Get_City_Pairs(1)
+
+
+
+if __name__ == "__main__":
+    main()
