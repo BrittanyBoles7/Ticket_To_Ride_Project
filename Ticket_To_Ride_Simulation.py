@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import random
 import heapq
+import unittest
 
 
 def Creating_The_Board():
@@ -191,14 +192,14 @@ def Test_Board():
     board = pd.DataFrame(fill_in_color)
 
     # Optionally, fill in some example counts and colors
-    board.loc['Helena', 'Winnipeg'] = [('blue', 4)]
-    board.loc['Winnipeg', 'Helena'] = [('blue', 4)]
-    board.loc['Helena', 'Calgary'] = [('any', 4)]
-    board.loc['Calgary', 'Helena'] = [('any', 4)]
-    board.loc['Seattle', 'Helena'] = [('yellow', 6)]
-    board.loc['Helena', 'Seattle'] = [('yellow', 6)]
-    board.loc['Calgary', 'Winnipeg'] = [('yellow', 20)]
-    board.loc['Winnipeg', 'Calgary'] = [('yellow', 20)]
+    board.loc['Helena', 'Winnipeg'] = [('blue', 2)]
+    board.loc['Winnipeg', 'Helena'] = [('blue', 2)]
+    board.loc['Helena', 'Calgary'] = [('any', 1)]
+    board.loc['Calgary', 'Helena'] = [('any', 1)]
+    board.loc['Seattle', 'Helena'] = [('yellow', 1)]
+    board.loc['Helena', 'Seattle'] = [('yellow', 1)]
+    board.loc['Calgary', 'Winnipeg'] = [('yellow', 6)]
+    board.loc['Winnipeg', 'Calgary'] = [('yellow', 6)]
 
     print(board)
     return board
@@ -254,18 +255,10 @@ def Get_City_Pairs(num_of_cards):
     return city_pairs
 
 
-def Shortest_Path(board, routes):
+def Shortest_Path(board, routes, cities):
     # points per track
     points_schema = {1: 1, 2: 3, 3: 4, 4: 7, 5: 10, 6: 15}
     # Define the list of cities test case
-    # cities = ['Helena', 'Winnipeg', 'Calgary', 'Seattle']
-    # Define the list of cities
-    cities = ['Helena', 'Winnipeg', 'Calgary', 'Vancouver', 'Seattle', 'Portland', 'San Francesco',
-              'Los Angeles', 'Salt Lake City', 'Sault St. Marie', 'Montreal', 'Toronto', 'Boston',
-              'New York', 'Duluth', 'Pittsburgh', 'Chicago', 'Washington DC', 'Omaha', 'Denver',
-              'Las Vegas', 'Phoenix', 'Sante Fe', 'El Palo', 'Oklahoma City', 'Kansas City', 'Saint Louis',
-              'Nashville', 'Raleigh', 'Little Rock', 'Alanta', 'Charleston', 'Miami', 'Dallas',
-              'Houston', 'New Orleans', 'Miami']
 
     start_node = routes["city1"]
     end_node = routes["city2"]
@@ -326,18 +319,37 @@ def Shortest_Path(board, routes):
 
     return result_df, path
 
-def main():
+
+def ticket_to_ride():
     board = Creating_The_Board()
     routes = Get_City_Pairs(1)
-    # test case simplified
-    # board = Test_Board()
-    # # Define a list to hold each route card with city pairs and points
-    # routes = [
-    #     {"city1": "Winnipeg", "city2": "Calgary", "points": 11}]
-    for route in routes:
-        Shortest_Path(board, route)
-        
+    cities = ['Helena', 'Winnipeg', 'Calgary', 'Vancouver', 'Seattle', 'Portland', 'San Francesco',
+              'Los Angeles', 'Salt Lake City', 'Sault St. Marie', 'Montreal', 'Toronto', 'Boston',
+              'New York', 'Duluth', 'Pittsburgh', 'Chicago', 'Washington DC', 'Omaha', 'Denver',
+              'Las Vegas', 'Phoenix', 'Sante Fe', 'El Palo', 'Oklahoma City', 'Kansas City', 'Saint Louis',
+              'Nashville', 'Raleigh', 'Little Rock', 'Alanta', 'Charleston', 'Miami', 'Dallas',
+              'Houston', 'New Orleans', 'Miami']
 
+    for route in routes:
+        Shortest_Path(board, route, cities)
 
 if __name__ == "__main__":
-    main()
+    ticket_to_ride()
+# class TestBasic(unittest.TestCase):
+#     def test_basic(self):
+#         board = Test_Board()
+#         # Define a list to hold each route card with city pairs and points
+#         routes =[
+#         {"city1": "Winnipeg", "city2": "Calgary", "points": 11}]
+#
+#         route = routes[0]
+#         cities = ['Helena', 'Winnipeg', 'Calgary', 'Seattle']
+#         results, path = Shortest_Path(board, route, cities)
+#         self.assertEqual(path, ['Winnipeg', 'Helena', 'Calgary'],"path is correct")
+#         end_node = route["city2"]
+#         points = results.loc[end_node, 'Points_Earned'] + route['points']
+#         self.assertEqual(points,15,"correct total points")
+#
+# if __name__ == "__main__":
+#     unittest.main()
+
