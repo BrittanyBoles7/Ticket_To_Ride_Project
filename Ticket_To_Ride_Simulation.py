@@ -12,7 +12,7 @@ def Creating_The_Board():
               'New York', 'Duluth', 'Pittsburgh', 'Chicago', 'Washington DC', 'Omaha', 'Denver',
               'Las Vegas', 'Phoenix', 'Sante Fe', 'El Palo', 'Oklahoma City', 'Kansas City', 'Saint Louis',
               'Nashville', 'Raleigh', 'Little Rock', 'Alanta', 'Charleston', 'Miami', 'Dallas',
-              'Houston', 'New Orleans', 'Miami']
+              'Houston', 'New Orleans']
 
     fill_in_color = {
         city: {other_city: [('no_Connection', 0)] for other_city in cities} for city in cities
@@ -332,6 +332,8 @@ def ticket_to_ride():
 
     for route in routes:
         Shortest_Path(board, route, cities)
+
+
 
 if __name__ == "__main__":
     ticket_to_ride()
