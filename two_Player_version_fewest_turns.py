@@ -347,7 +347,7 @@ def update_boards(city1,city2, boardP, boardO):
         boardO.loc[city2, city1] = [np.inf]
 
     #if the opponent already has a track here but there is multiple tracks or vise versa
-    elif len(pl_path)>2 and (0 in op_path or np.inf in pl_path):
+    elif len(pl_path)>=2 and (0 in op_path or np.inf in pl_path):
         # doesn't matter the order, either way both players have access to this path.
         # in the real game one player could potentially occupy both tracks to mess with a player
         # we don't take this into consideration though.
@@ -360,7 +360,7 @@ def update_boards(city1,city2, boardP, boardO):
         boardO.loc[city2, city1] = [np.inf,0]
 
     #else if this is the first time a tracks laid on a multiple track path
-    elif len(pl_path)>2:
+    elif len(pl_path)>=2:
 
         boardP.loc[city1,city2][1] =0
         boardP.loc[city1,city2][1] = 0
@@ -388,6 +388,78 @@ def next_path_placement(board,path):
         pass
         #print("route is already all zero")
     return p1,p2
+
+def play(board, routes,cities,points,boardo,t):
+    points_schema = {1: 1, 2: 3, 3: 4, 4: 7, 5: 10, 6: 15}
+    # player one goes
+    route = routes[0]
+    # figure out how to take a path , add to t1 and t2 and
+    # update other players board to not have played route just played.
+    results, path = Shortest_Path(board, route, cities)
+    # results_m, path_m = Shortest_Path(board1, route1, cities)
+
+    if len(path) == 1:
+        print("debugging, this shouldn't happen but was")
+    # we no longer can connect the city we lose points
+    elif path == []:
+        points -= route["points"]
+        routes = Get_City_Pairs(1)
+    else:
+        c1, c2 = next_path_placement(board, path)
+
+        if c1 == "null":
+            # we already completed this route just using old tracks
+            points += route["points"]
+            routes = Get_City_Pairs(1)  # pick a new city
+
+        else:
+            # update # of tracks laid and points for player
+            t = t - board.loc[c1, c2][0]  # cost to place
+            points += points_schema[board.loc[c1, c2][0]]
+
+            board, boardo = update_boards(c1, c2, board, boardo)
+            if c2 == route["city2"]:  # the end destination
+                points += route["points"]
+                routes = Get_City_Pairs(1)  # pick a new city
+                # print("city reached through path: ", path)
+                # print("Points so far: ", points1)
+    return board,boardo,routes,points,t
+
+def play_turn(board, routes,cities,points,boardo,t):
+    points_schema = {1: 1, 2: 3, 3: 4, 4: 7, 5: 10, 6: 15}
+    # player one goes
+    route = routes[0]
+    # figure out how to take a path , add to t1 and t2 and
+    # update other players board to not have played route just played.
+    results, path = Fewest_Turns_Path(board, route, cities)
+    # results_m, path_m = Shortest_Path(board1, route1, cities)
+
+    if len(path) == 1:
+        print("debugging, this shouldn't happen but was")
+    # we no longer can connect the city we lose points
+    elif path == []:
+        points -= route["points"]
+        routes = Get_City_Pairs(1)
+    else:
+        c1, c2 = next_path_placement(board, path)
+
+        if c1 == "null":
+            # we already completed this route just using old tracks
+            points += route["points"]
+            routes = Get_City_Pairs(1)  # pick a new city
+
+        else:
+            # update # of tracks laid and points for player
+            t = t - board.loc[c1, c2][0]  # cost to place
+            points += points_schema[board.loc[c1, c2][0]]
+
+            board, boardo = update_boards(c1, c2, board, boardo)
+            if c2 == route["city2"]:  # the end destination
+                points += route["points"]
+                routes = Get_City_Pairs(1)  # pick a new city
+                # print("city reached through path: ", path)
+                # print("Points so far: ", points1)
+    return board,boardo,routes,points,t
 
 def ticket_to_ride_two_players():
 
@@ -418,79 +490,14 @@ def ticket_to_ride_two_players():
         points2 = 0
         while t1 > 0 and t2 > 0:
 
-            #player one goes
-            route1 = routes1[0]
-            routes = [
-            {"city1": "El Paso", "city2": "Houston", "points": 11}]
-            route1 = routes[0]
-            # figure out how to take a path , add to t1 and t2 and
-            # update other players board to not have played route just played.
-            results,path = Fewest_Turns_Path(board1, route1, cities)
-            #results_m, path_m = Shortest_Path(board1, route1, cities)
+            board1,board2,routes1,points1,t1 = play(board1,routes1,cities,points1,board2,t1)
+            if t1 <= 0:
+                #print("player two laid all their tracks")
+                break
+            board2, board1, routes2, points2, t2 = play_turn(board2, routes2, cities, points2, board1, t2)
+            if t2 <= 0:
+                break
 
-
-            if len(path) ==1:
-                print("debugging, this shouldn't happen but was")
-            # we no longer can connect the city we lose points
-            elif path == []:
-                points1 -= route1["points"]
-                routes1 = Get_City_Pairs(1)
-            else:
-                c1,c2 = next_path_placement(board1,path)
-
-                if c1 == "null":
-                    # we already completed this route just using old tracks
-                    points1 += route1["points"]
-                    routes1 = Get_City_Pairs(1)  # pick a new city
-
-                else:
-                    # update # of tracks laid and points for player
-                    t1 = t1 - board1.loc[c1, c2][0]  # cost to place
-                    points1 += points_schema[board1.loc[c1, c2][0]]
-
-                    board1,board2 = update_boards(c1,c2,board1,board2)
-                    if c2 == route1["city2"]: # the end destination
-                            points1 += route1["points"]
-                            routes1 = Get_City_Pairs(1) # pick a new city
-                            #print("city reached through path: ", path)
-                            #print("Points so far: ", points1)
-                    if t1 <= 0:
-                        #print("player two laid all their tracks")
-                        break
-
-
-            # player twos turn
-            route2 = routes2[0]
-            results, path = Shortest_Path(board2, route2, cities)
-            if len(path) ==1:
-                print("dah fuck")
-                # we no longer can connect the city we lose points
-            elif path == []:
-                points2 -= route2["points"]
-                routes2 = Get_City_Pairs(1)
-            else:
-                c1, c2 = next_path_placement(board2, path)
-                if c1 == "null":
-                    # we already completed this route just using old tracks
-                    points2 += route2["points"]
-                    routes2 = Get_City_Pairs(1)  # pick a new city
-                else:
-
-                    # update trains and points player 2
-                    t1 = t1 - board2.loc[c1,c2][0] # cost to place
-                    points2 += points_schema[board2.loc[c1, c2][0]]
-
-                    # update board with new play
-                    board2,board1 = update_boards(c1,c2,board2,board1)
-
-                    if c2 == route2["city2"]: # the end destination
-                        routes2 = Get_City_Pairs(1) # pick a new city
-                        points2 += route2["points"]
-                        #print("city reached through path: ",path)
-                        #print("Points so far: ",points2)
-                    if t2 <= 0:
-                        #print("player two laid all their tracks")
-                        break
         if points1 > points2:
             player1Wins += 1
         elif points1 < points2:

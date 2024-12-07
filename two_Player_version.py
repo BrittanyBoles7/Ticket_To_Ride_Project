@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import random
 import heapq
-import unittest
+
 
 
 def Creating_The_Board():
@@ -10,7 +10,7 @@ def Creating_The_Board():
     cities = ['Helena', 'Winnipeg', 'Calgary', 'Vancouver', 'Seattle', 'Portland', 'San Francesco',
               'Los Angeles', 'Salt Lake City', 'Sault St. Marie', 'Montreal', 'Toronto', 'Boston',
               'New York', 'Duluth', 'Pittsburgh', 'Chicago', 'Washington DC', 'Omaha', 'Denver',
-              'Las Vegas', 'Phoenix', 'Sante Fe', 'El Palo', 'Oklahoma City', 'Kansas City', 'Saint Louis',
+              'Las Vegas', 'Phoenix', 'Sante Fe', 'El Paso', 'Oklahoma City', 'Kansas City', 'Saint Louis',
               'Nashville', 'Raleigh', 'Little Rock', 'Atlanta', 'Charleston', 'Miami', 'Dallas',
               'Houston', 'New Orleans']
 
@@ -120,18 +120,18 @@ def Creating_The_Board():
     board.loc['Las Vegas', 'Los Angeles'] = [2]
     board.loc['Los Angeles', 'Phoenix'] = [2]
     board.loc['Phoenix', 'Los Angeles'] = [2]
-    board.loc['Los Angeles', 'El Palo'] = [6]
-    board.loc['El Palo', 'Los Angeles'] = [6]
-    board.loc['Phoenix', 'El Palo'] = [3]
-    board.loc['El Palo', 'Phoenix'] = [3]
+    board.loc['Los Angeles', 'El Paso'] = [6]
+    board.loc['El Paso', 'Los Angeles'] = [6]
+    board.loc['Phoenix', 'El Paso'] = [3]
+    board.loc['El Paso', 'Phoenix'] = [3]
     board.loc['Phoenix', 'Sante Fe'] = [3]
     board.loc['Sante Fe', 'Phoenix'] = [3]
     board.loc['Sante Fe', 'Oklahoma City'] = [3]
     board.loc['Oklahoma City', 'Sante Fe'] = [3]
-    board.loc['Sante Fe', 'El Palo'] = [2]
-    board.loc['El Palo', 'Sante Fe'] = [2]
-    board.loc['Oklahoma City', 'El Palo'] = [6]
-    board.loc['El Palo', 'Oklahoma City'] = [6]
+    board.loc['Sante Fe', 'El Paso'] = [2]
+    board.loc['El Paso', 'Sante Fe'] = [2]
+    board.loc['Oklahoma City', 'El Paso'] = [6]
+    board.loc['El Paso', 'Oklahoma City'] = [6]
     board.loc['Oklahoma City', 'Dallas'] = [2,2]
     board.loc['Dallas', 'Oklahoma City'] = [2,2]
     board.loc['Oklahoma City', 'Little Rock'] = [2]
@@ -172,10 +172,10 @@ def Creating_The_Board():
     board.loc['Houston', 'New Orleans'] = [2]
     board.loc['Houston', 'Dallas'] = [1]
     board.loc['Dallas', 'Houston'] = [1]
-    board.loc['Dallas', 'El Palo'] = [4]
-    board.loc['El Palo', 'Dallas'] = [4]
-    board.loc['El Palo', 'Houston'] = [6]
-    board.loc['Houston', 'El Palo'] = [6]
+    board.loc['Dallas', 'El Paso'] = [4]
+    board.loc['El Paso', 'Dallas'] = [4]
+    board.loc['El Paso', 'Houston'] = [6]
+    board.loc['Houston', 'El Paso'] = [6]
 
     # print(board)
     return board
@@ -191,8 +191,8 @@ def Get_City_Pairs(num_of_cards):
         {"city1": "Dallas", "city2": "New York", "points": 11},
 
         {"city1": "Los Angeles", "city2": "New York", "points": 21},
-        {"city1": "Denver", "city2": "El Palo", "points": 4},
-        {"city1": "Duluth", "city2": "El Palo", "points": 10},
+        {"city1": "Denver", "city2": "El Paso", "points": 4},
+        {"city1": "Duluth", "city2": "El Paso", "points": 10},
         {"city1": "Portland", "city2": "Phoenix", "points": 11},
         {"city1": "Sault St. Marie", "city2": "Oklahoma City", "points": 9},
         {"city1": "Helena", "city2": "Los Angeles", "points": 8},
@@ -214,7 +214,7 @@ def Get_City_Pairs(num_of_cards):
         {"city1": "Los Angeles", "city2": "Miami", "points": 20},
         {"city1": "Seattle", "city2": "New York", "points": 22},
         {"city1": "Portland", "city2": "Nashville", "points": 17},
-        {"city1": "San Francisco", "city2": "Atlanta", "points": 17},
+        {"city1": "San Francesco", "city2": "Atlanta", "points": 17},
         {"city1": "Vancouver", "city2": "Montreal", "points": 20},
         {"city1": "Calgary", "city2": "Phoenix", "points": 13},
 
@@ -224,8 +224,6 @@ def Get_City_Pairs(num_of_cards):
     city_pairs = random.sample(routes, num_of_cards)
 
     return city_pairs
-
-
 
 def Shortest_Path(board, routes, cities):
     start_node = routes["city1"]
@@ -279,47 +277,46 @@ def Shortest_Path(board, routes, cities):
 
     return distances, path
 
+def update_boards(city1, city2, player_board, opponent_board):
 
-def update_boards(city1,city2, boardP, boardO):
-
-    pl_path = boardP.loc[city1,city2]
-    op_path = boardO.loc[city1,city2]
+    pl_path = player_board.loc[city1,city2]
+    op_path = opponent_board.loc[city1,city2]
 
     # some cities have multiple tracks so we need to check for that.
     if len(pl_path) == 1 :
         # Update the current players board
-        boardP.loc[city1, city2] = [0]
-        boardP.loc[city2, city1] = [0]
+        player_board.loc[city1, city2] = [0]
+        player_board.loc[city2, city1] = [0]
 
         # Update the opponents board
-        boardO.loc[city1, city2] = [np.inf]
-        boardO.loc[city2, city1] = [np.inf]
+        opponent_board.loc[city1, city2] = [np.inf]
+        opponent_board.loc[city2, city1] = [np.inf]
 
     #if the opponent already has a track here but there is multiple tracks or vise versa
-    elif len(pl_path)>2 and (0 in op_path or np.inf in pl_path):
+    elif len(pl_path)>=2 and (0 in op_path or np.inf in pl_path):
         # doesn't matter the order, either way both players have access to this path.
         # in the real game one player could potentially occupy both tracks to mess with a player
         # we don't take this into consideration though.
         # Update the current players board
-        boardP.loc[city1, city2]= [0,np.inf]
-        boardP.loc[city2, city1] = [0,np.inf]
+        player_board.loc[city1, city2]= [0, np.inf]
+        player_board.loc[city2, city1] = [0, np.inf]
 
         # Update the opponents board
-        boardO.loc[city1, city2] = [np.inf,0]
-        boardO.loc[city2, city1] = [np.inf,0]
+        opponent_board.loc[city1, city2] = [np.inf, 0]
+        opponent_board.loc[city2, city1] = [np.inf, 0]
 
     #else if this is the first time a tracks laid on a multiple track path
-    elif len(pl_path)>2:
+    elif len(pl_path)>=2:
 
-        boardP.loc[city1,city2][1] =0
-        boardP.loc[city1,city2][1] = 0
+        player_board.loc[city1,city2][1] =0
+        player_board.loc[city1,city2][1] = 0
 
-        boardO.loc[city1,city2][1] = np.inf
-        boardO.loc[city1,city2][1] = np.inf
+        opponent_board.loc[city1,city2][1] = np.inf
+        opponent_board.loc[city1,city2][1] = np.inf
 
 
 
-    return boardP,boardO
+    return player_board,opponent_board
 
 def next_path_placement(board,path):
     p1 = path[0]
@@ -336,24 +333,60 @@ def next_path_placement(board,path):
 
     return p1,p2
 
+def play(board, routes,cities,points,boardo,t,p):
+    points_schema = {1: 1, 2: 3, 3: 4, 4: 7, 5: 10, 6: 15}
+    # player one goes
+    route = routes[0]
+    # figure out how to take a path , add to t1 and t2 and
+    # update other players board to not have played route just played.
+    results, path = Shortest_Path(board, route, cities)
+
+
+    if len(path) == 1:
+        print("debugging, this shouldn't happen but was")
+    # we no longer can connect the city we lose points
+    elif path == []:
+        print("Player",p,"couldn't connect city: ",path)
+        points -= route["points"]
+        routes = Get_City_Pairs(1)
+    else:
+        c1, c2 = next_path_placement(board, path)
+
+        if c1 == "null":
+            # we already completed this route just using old tracks
+            points += route["points"]
+            routes = Get_City_Pairs(1)  # pick a new city
+            print("Player",p," No path You loose points")
+
+        else:
+            print("player",p," laid: ",c1,c2)
+            # update # of tracks laid and points for player
+            t = t - board.loc[c1, c2][0]  # cost to place
+            points += points_schema[board.loc[c1, c2][0]]
+            board, boardo = update_boards(c1, c2, board, boardo)
+
+            if c2 == route["city2"]:  # the end destination
+                points += route["points"]
+                routes = Get_City_Pairs(1)  # pick a new city
+                print("Player",p,"city reached through path: ", path)
+                print("Points so far: ", points)
+    return board,boardo,routes,points,t
+
 
 def ticket_to_ride_two_players():
 
     cities = ['Helena', 'Winnipeg', 'Calgary', 'Vancouver', 'Seattle', 'Portland', 'San Francesco',
               'Los Angeles', 'Salt Lake City', 'Sault St. Marie', 'Montreal', 'Toronto', 'Boston',
               'New York', 'Duluth', 'Pittsburgh', 'Chicago', 'Washington DC', 'Omaha', 'Denver',
-              'Las Vegas', 'Phoenix', 'Sante Fe', 'El Palo', 'Oklahoma City', 'Kansas City', 'Saint Louis',
+              'Las Vegas', 'Phoenix', 'Sante Fe', 'El Paso', 'Oklahoma City', 'Kansas City', 'Saint Louis',
               'Nashville', 'Raleigh', 'Little Rock', 'Atlanta', 'Charleston', 'Miami', 'Dallas',
               'Houston', 'New Orleans', 'Miami']
 
     board1 = Creating_The_Board()  # for player ones version
-    board2 = Creating_The_Board()  # for player twos version as routes get set from opponent remove them from this players options.
+    board2 = Creating_The_Board()  # for player twos version as routes get set from opponent remove them from these players options.
     routes1 = Get_City_Pairs(1)  # player 1 routes
     routes2 = Get_City_Pairs(1)  # player 2 routes
 
-    # points per track
-    points_schema = {1: 1, 2: 3, 3: 4, 4: 7, 5: 10, 6: 15}
-    # Define the list of cities test case
 
     # total number of trains per player
     t1 = 40
@@ -361,66 +394,16 @@ def ticket_to_ride_two_players():
     points1 = 0
     points2 = 0
     while t1 > 0 and t2 > 0:
+        board1, board2, routes1, points1, t1 = play(board1, routes1, cities, points1, board2, t1,"one")
 
-        #player one goes
-        route1 = routes1[0]
-        # figure out how to take a path , add to t1 and t2 and
-        # update other players board to not have played route just played.
-        results,path = Shortest_Path(board1, route1, cities)
+        if t1 <= 0:
+            print("player two laid all their tracks")
+            break
 
-        if len(path) ==1:
-            print("debugging, this shouldn't happen but was")
-        # we no longer can connect the city we lose points
-        elif not path:
-            points1 -= route1["points"]
-            routes1 = Get_City_Pairs(1)
-        else:
-            c1,c2 = next_path_placement(board1,path)
-            print("next placement player 1: ", (c1,c2))
-
-            # update # of tracks laid and points for player
-            t1 = t1 - board1.loc[c1, c2][0]  # cost to place
-            points1 += points_schema[board1.loc[c1, c2][0]]
-
-
-            board1,board2 = update_boards(c1,c2,board1,board2)
-            if c2 == route1["city2"]: # the end destination
-                points1 += route1["points"]
-                routes1 = Get_City_Pairs(1) # pick a new city
-                print("city reached through path: ", path)
-                print("Points so far: ", points1)
-            if t1 <= 0:
-                print("player two laid all their tracks")
-                break
-
-
-        # player twos turn
-        route2 = routes2[0]
-        results, path = Shortest_Path(board2, route2, cities)
-        if len(path) ==1:
-            print("dah fuck")
-            # we no longer can connect the city we lose points
-        elif not path:
-            points2 -= route2["points"]
-        else:
-            c1, c2 = next_path_placement(board2, path)
-            print("next placement player 2: ", (c1, c2))
-
-            # update trains and points player 2
-            t1 = t1 - board2.loc[c1,c2][0] # cost to place
-            points2 += points_schema[board2.loc[c1, c2][0]]
-
-            # update board with new play
-            board2,board1 = update_boards(c1,c2,board2,board1)
-
-            if c2 == route2["city2"]: # the end destination
-                routes2 = Get_City_Pairs(1) # pick a new city
-                points2 += route2["points"]
-                print("city reached through path: ",path)
-                print("Points so far: ",points2)
-            if t2 <= 0:
-                print("player two laid all their tracks")
-                break
+        board2, board1, routes2, points2, t2 = play(board2, routes2, cities, points2, board1, t2,"two")
+        if t2 <= 0:
+            print("player two laid all their tracks")
+            break
     print("player 1 total: ", points1)
     print("player 2 total: ", points2)
     return
