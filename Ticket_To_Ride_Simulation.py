@@ -188,10 +188,8 @@ def Test_Board():
         city: {other_city: [('no_Connection', 0)] for other_city in cities} for city in cities
     }
 
-    # Create the DataFrame
-    board = pd.DataFrame(fill_in_color)
 
-    # Optionally, fill in some example counts and colors
+    board = pd.DataFrame(fill_in_color)
     board.loc['Helena', 'Winnipeg'] = [('blue', 2)]
     board.loc['Winnipeg', 'Helena'] = [('blue', 2)]
     board.loc['Helena', 'Calgary'] = [('any', 1)]
@@ -258,12 +256,12 @@ def Get_City_Pairs(num_of_cards):
 def Shortest_Path(board, routes, cities):
     # points per track
     points_schema = {1: 1, 2: 3, 3: 4, 4: 7, 5: 10, 6: 15}
-    # Define the list of cities test case
+
 
     start_node = routes["city1"]
     end_node = routes["city2"]
 
-    # Initialize distance and points dictionaries with large values
+    # Initialize distance and points
     distances = {city: np.inf for city in cities}
     points = {city: 0 for city in cities}  # Initialize points for each city
     previous = {city: None for city in cities}  # To track the route
@@ -337,21 +335,22 @@ def ticket_to_ride():
 
 if __name__ == "__main__":
     ticket_to_ride()
-# class TestBasic(unittest.TestCase):
-#     def test_basic(self):
-#         board = Test_Board()
-#         # Define a list to hold each route card with city pairs and points
-#         routes =[
-#         {"city1": "Winnipeg", "city2": "Calgary", "points": 11}]
-#
-#         route = routes[0]
-#         cities = ['Helena', 'Winnipeg', 'Calgary', 'Seattle']
-#         results, path = Shortest_Path(board, route, cities)
-#         self.assertEqual(path, ['Winnipeg', 'Helena', 'Calgary'],"path is correct")
-#         end_node = route["city2"]
-#         points = results.loc[end_node, 'Points_Earned'] + route['points']
-#         self.assertEqual(points,15,"correct total points")
-#
-# if __name__ == "__main__":
-#     unittest.main()
+
+class TestBasic(unittest.TestCase):
+    def test_basic(self):
+        board = Test_Board()
+        # Define a list to hold each route card with city pairs and points
+        routes =[
+        {"city1": "Winnipeg", "city2": "Calgary", "points": 11}]
+
+        route = routes[0]
+        cities = ['Helena', 'Winnipeg', 'Calgary', 'Seattle']
+        results, path = Shortest_Path(board, route, cities)
+        self.assertEqual(path, ['Winnipeg', 'Helena', 'Calgary'],"path is correct")
+        end_node = route["city2"]
+        points = results.loc[end_node, 'Points_Earned'] + route['points']
+        self.assertEqual(points,15,"correct total points")
+
+if __name__ == "__main__":
+    unittest.main()
 

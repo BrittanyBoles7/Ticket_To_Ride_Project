@@ -6,7 +6,7 @@ import unittest
 
 
 def Creating_The_Board():
-    # Define the list of cities
+    # list of cities
     cities = ['Helena', 'Winnipeg', 'Calgary', 'Vancouver', 'Seattle', 'Portland', 'San Francesco',
               'Los Angeles', 'Salt Lake City', 'Sault St. Marie', 'Montreal', 'Toronto', 'Boston',
               'New York', 'Duluth', 'Pittsburgh', 'Chicago', 'Washington DC', 'Omaha', 'Denver',
@@ -20,8 +20,6 @@ def Creating_The_Board():
 
     # Create the DataFrame
     board = pd.DataFrame(fill_in_color)
-
-    # Optionally, fill in some example counts and colors
     board.loc['Helena', 'Winnipeg'] = [4]
     board.loc['Winnipeg', 'Helena'] = [4]
     board.loc['Helena', 'Calgary'] = [4]
@@ -177,7 +175,7 @@ def Creating_The_Board():
     board.loc['El Paso', 'Houston'] = [6]
     board.loc['Houston', 'El Paso'] = [6]
 
-    # print(board)
+    # print(board) # for debugging
     return board
 
 def Get_City_Pairs(num_of_cards):
@@ -273,7 +271,7 @@ def Shortest_Path(board, routes, cities):
         return None, []
 
     #print(f"Optimal path from {start_node} to {end_node}:")
-    #print(" -> ".join(path))
+    #print(" -> ".join(path))  # debugging
 
     return distances, path
 
