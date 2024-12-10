@@ -1,5 +1,5 @@
 # Ticket_To_Ride_Project
-This code simulates a simple case of ticket to ride comparing two different strategies. For the full report see: [CSCI_532___Final_Project___Ticket_to_Ride__Alg__Implementation](CSCI_532___Final_Project___Ticket_to_Ride__Alg__Implementation.pdf)
+This code simulates a simple case of ticket to ride comparing two different strategies. For the full report see: [CSCI_532___Final_Project___Ticket_to_Ride__Alg__Implementation](CSCI_532___Final_Project___Ticket_to_Ride__Alg__Implementation (1).pdf)
 # Ticket_To_Ride_Simulation
 This is where we did the simple case. It's just using Dijktras to calculate the shortest path between two cities on the board. 
 
